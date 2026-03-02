@@ -19,19 +19,22 @@ const {
   verificationMessage,
   pairingReasonMessage,
   accept,
+  nullifierSessionId,
+  pouScopeId,
+  pouAllowedIssuer,
+  authScopeId,
 } = require("./constants");
 
 function createPOUScope(transactionSender) {
   return {
-    id: 1,
+    id: pouScopeId,
     circuitId: CircuitId.AtomicQueryV3OnChainStable,
     params: {
       sender: transactionSender,
+      nullifierSessionId: nullifierSessionId,
     },
     query: {
-      allowedIssuers: [
-        "did:iden3:billions:main:2VvVPv3MGEjrcqnCcWxgrY5kWrQ8VbLjiDNUGqD3hw",
-      ],
+      allowedIssuers: pouAllowedIssuer,
       type: "UniquenessCredential",
       context: "ipfs://QmcUEDa42Er4nfNFmGQVjiNYFaik6kvNQjfTeBrdSx83At",
     },
@@ -40,7 +43,7 @@ function createPOUScope(transactionSender) {
 
 function createAuthScope(recipientDid) {
   return {
-    id: 2,
+    id: authScopeId,
     circuitId: CircuitId.AuthV3_8_32,
     params: {
       challenge: computeAttestationHash({

@@ -2,7 +2,7 @@ const { ethers } = require("ethers");
 const { DID } = require("@iden3/js-iden3-core");
 
 const ATTESTATION_SCHEMA_ID =
-  "0x1edd779a711895a6f8bc23826757908823dd58ac198b4cf962d3adb9fd38845a"; // bytes32
+  "0xb69e983f4ea7e92444ff1a5bcaaffe08bf979701508b6ad3ef97d6e0d4858947"; // bytes32
 
 const ATTESTER_DID = ""; // string
 const ATTESTER_IDEN3_ID = 0n; // uint256
@@ -14,6 +14,10 @@ const REF_ID =
   "0x0000000000000000000000000000000000000000000000000000000000000000"; // bytes32
 const DATA = "0x"; // bytes
 
+function extractIdFromDid(did) {
+  return DID.idFromDID(DID.parse(did)).bigInt();
+}
+
 function buildJsonAttestation(req) {
   return {
     schemaId: ATTESTATION_SCHEMA_ID,
@@ -24,7 +28,7 @@ function buildJsonAttestation(req) {
     },
     recipient: {
       did: req.recipientDid,
-      iden3Id: DID.idFromDID(DID.parse(req.recipientDid)).bigInt().toString(),
+      iden3Id: extractIdFromDid(req.recipientDid).toString(),
       ethereumAddress: req.recipientEthAddress,
     },
     expirationTime: EXPIRATION_TIME.toString(),
@@ -55,7 +59,7 @@ function buildEncodedAttestation(req) {
       ATTESTER_IDEN3_ID,
       ATTESTER_ETH_ADDRESS,
       req.recipientDid,
-      0n, // recipient.iden3Id — nullified
+      extractIdFromDid(req.recipientDid),
       req.recipientEthAddress,
       EXPIRATION_TIME,
       REVOCABLE,
